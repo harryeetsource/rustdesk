@@ -80,7 +80,7 @@ mod webrtc {
     }
 
     fn tile_log2(threads: u32) -> std::os::raw::c_uint {
-        (threads as f64).log2().ceil() as _
+        (threads as f64).log2().ceil() as std::os::raw::c_uint
     }
 
     fn get_super_block_size(width: u32, height: u32, threads: u32) -> aom_superblock_size_t {
