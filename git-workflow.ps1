@@ -16,6 +16,15 @@ if (Test-Path $BridgeHeader) {
     Remove-Item $BridgeHeader -Force
 }
 
+Write-Host "`n=== Synchronizing existing submodules ===" -ForegroundColor Cyan
+
+git submodule sync --recursive
+git submodule update --init --recursive
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Submodule preflight update failed. Check submodules for local changes."
+}
+
 Write-Host "`n=== Checking working tree ===" -ForegroundColor Cyan
 
 $status = git status --porcelain
