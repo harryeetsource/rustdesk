@@ -8,16 +8,27 @@ vcpkg_find_acquire_program(PERL)
 get_filename_component(PERL_PATH ${PERL} DIRECTORY)
 vcpkg_add_to_path(${PERL_PATH})
 
-# Force AOM 3.9.1 for RustDesk Windows static build
-vcpkg_from_git(
-    OUT_SOURCE_PATH SOURCE_PATH
-    URL "https://aomedia.googlesource.com/aom"
-    REF 8ad484f8a18ed1853c094e7d3a4e023b2a92df28 # 3.9.1
-    PATCHES
-        aom-uninitialized-pointer.diff
-        aom-avx2.diff
-        aom-install.diff
-)
+if(DEFINED ENV{USE_AOM_391})
+    set(AOM_CONFIG_PATH "lib/cmake/aom")
+    vcpkg_from_git(
+        OUT_SOURCE_PATH SOURCE_PATH
+        URL "https://aomedia.googlesource.com/aom"
+        REF 8ad484f8a18ed1853c094e7d3a4e023b2a92df28 # 3.9.1
+        PATCHES
+            aom-uninitialized-pointer-3.9.1.diff
+            aom-avx2.diff
+            aom-install.diff
+    )
+else()
+    set(AOM_CONFIG_PATH "lib/cmake/AOM")
+    vcpkg_from_git(
+        OUT_SOURCE_PATH SOURCE_PATH
+        URL "https://aomedia.googlesource.com/aom"
+        REF 03087864cf4bea6abb0d28f95cf7843511413d8f # 3.14.1
+        PATCHES
+            aom-uninitialized-pointer.diff
+    )
+endif()
 
 set(aom_target_cpu "")
 if(VCPKG_TARGET_IS_UWP OR (VCPKG_TARGET_IS_WINDOWS AND VCPKG_TARGET_ARCHITECTURE MATCHES "^arm"))
@@ -52,7 +63,8 @@ else()
     vcpkg_fixup_pkgconfig()
 endif()
 
-vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/${PORT})
+# Move cmake configs
+vcpkg_cmake_config_fixup(CONFIG_PATH ${AOM_CONFIG_PATH})
 
 file(REMOVE_RECURSE
     "${CURRENT_PACKAGES_DIR}/debug/include"

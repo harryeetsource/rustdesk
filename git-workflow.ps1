@@ -4,6 +4,7 @@ $RepoRoot = "C:\Users\harrison.edwards\rustdesk-fork\rustdesk"
 $FlutterDir = Join-Path $RepoRoot "flutter"
 $BridgeHeader = Join-Path $RepoRoot "flutter\windows\runner\generated_bridge.h"
 $LlvmPath = "C:\Program Files\LLVM\bin"
+$env:USE_AOM_391 = "1"
 
 Set-Location $RepoRoot
 
